@@ -2,7 +2,7 @@
 
 A comprehensive, lightweight, responsive open-source suite of **78+ online calculators, unit converters, math tools, and text generators** hosted on GitHub Pages.
 
-> 🌐 **Featured Partner Site**: For thousands of additional conversion tables, formulas, and online tools, visit [RapidTables.me](https://www.rapidtables.me/).
+> 🌐 **Featured Partner Site**: RapidTables.me provides thousands of conversion tables, formulas, and online tools.
 
 ---
 
