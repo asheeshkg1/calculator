@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antilog Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+            --secondary-color: #f9fafb; /* Tailwind gray-50 */
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 550px;
+            width: 95%;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        /* Input and Selection Styling */
+        .input-group-text {
+            background-color: #d1fae5; /* emerald-100 */
+            border-color: #a7f3d0; /* emerald-200 */
+            color: #065f46;
+            font-weight: 600;
+        }
+        .form-control:focus {
+            border-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Result Styling */
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 1rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .result-label {
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .final-value {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        
+        .formula-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background-color: var(--secondary-color);
+            border-radius: 0.75rem;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            border: 1px solid #d1fae5;
+            color: #065f46;
+        }
+        .info-box strong {
+            font-weight: 600;
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">Antilog Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Find the anti-logarithm ($x$) of a value ($y$). If $\log_b x = y$, then the anti-log is calculated as $x = \log_b^{-1}(y) = b^y$.</p>
+
+                <form id="antilogForm" onsubmit="event.preventDefault(); calculateAntilog();">
+                    
+                    <!-- Logarithm Value Input (y) -->
+                    <div class="mb-4">
+                        <label for="logValueInput" class="form-label fw-semibold text-gray-700">Logarithm Value ($y$)</label>
+                        <input type="number" step="any" class="form-control p-3" id="logValueInput" value="1.0" required oninput="calculateAntilog()">
+                    </div>
+
+                    <!-- Base Selector -->
+                    <div class="mb-5">
+                        <label class="form-label fw-semibold text-gray-700 mb-2">Select Base ($b$)</label>
+                        <div class="d-flex justify-content-around bg-gray-100 p-3 rounded-lg">
+                            
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="baseRadio" id="base10" value="10" checked onchange="calculateAntilog()">
+                                <label class="form-check-label fw-medium" for="base10">
+                                    Base 10 ($\text{antilog}_{10} y = 10^y$)
+                                </label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="baseRadio" id="baseE" value="e" onchange="calculateAntilog()">
+                                <label class="form-check-label fw-medium" for="baseE">
+                                    Base $e$ ($\text{antilog}_{e} y = e^y$)
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate Antilog</button>
+                </form>
+
+                <!-- Results Area -->
+                <div class="result-container" id="antilogResultsContainer" style="display:none;">
+                    <p class="result-label" id="formulaLabel">Resulting Formula: $x = \log_b^{-1}(y) = b^y$</p>
+                    <p class="final-value" id="finalAntilogValue">0</p>
+
+                    <div class="info-box">
+                        <p id="baseUsed"></p>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Enter the logarithm value and select the base above.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Result Elements ---
+    const finalAntilogValue = document.getElementById('finalAntilogValue');
+    const antilogResultsContainer = document.getElementById('antilogResultsContainer');
+    const formulaLabel = document.getElementById('formulaLabel');
+    const baseUsed = document.getElementById('baseUsed');
+
+    // --- Input Elements ---
+    const logValueInput = document.getElementById('logValueInput');
+    const baseRadios = document.getElementsByName('baseRadio');
+    
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    /**
+     * Helper function to display results.
+     */
+    function displayResult(antilogValue, baseSymbol, baseValue, y) {
+        
+        // Format the antilog result to 8 decimal places for precision
+        finalAntilogValue.textContent = antilogValue.toFixed(8);
+        
+        // Update info box
+        baseUsed.innerHTML = `<strong>Base Used:</strong> ${baseSymbol} (approx. ${baseValue.toFixed(4)})`;
+
+        // Update formula display with full notation
+        if (baseSymbol === 'e') {
+            formulaLabel.innerHTML = `Resulting Formula: $x = \log_e^{-1}(${y}) = e^{${y}}$`;
+        } else {
+             formulaLabel.innerHTML = `Resulting Formula: $x = \log_{10}^{-1}(${y}) = 10^{${y}}$`;
+        }
+        
+        messageElement.textContent = `Antilog of ${y} (Base ${baseSymbol}) is calculated.`;
+        messageElement.classList.remove('text-red-500');
+        antilogResultsContainer.style.display = 'block';
+    }
+
+    /**
+     * Displays an error message.
+     */
+    function displayError(msg) {
+        messageElement.textContent = msg;
+        messageElement.classList.add('text-red-500');
+        antilogResultsContainer.style.display = 'none';
+    }
+    
+    /**
+     * Main function to calculate the Antilogarithm.
+     * x = b^y
+     */
+    function calculateAntilog() {
+        const y = parseFloat(logValueInput.value);
+        let base = null;
+        let baseSymbol = '';
+
+        // Determine selected base
+        for (const radio of baseRadios) {
+            if (radio.checked) {
+                baseSymbol = radio.value;
+                break;
+            }
+        }
+        
+        if (baseSymbol === '10') {
+            base = 10;
+        } else if (baseSymbol === 'e') {
+            base = Math.E;
+        }
+
+        // Validation
+        if (isNaN(y)) {
+            displayError('Please enter a valid numerical value for the logarithm.');
+            return;
+        }
+        if (base === null) {
+            displayError('Please select a valid base (10 or e).');
+            return;
+        }
+        
+        let antilog;
+        
+        if (baseSymbol === '10') {
+            // Calculate 10^y
+            antilog = Math.pow(10, y);
+        } else { // baseSymbol === 'e'
+            // Calculate e^y
+            antilog = Math.exp(y);
+        }
+
+        // Display the result
+        displayResult(antilog, baseSymbol, base, y);
+    }
+
+    // --- Initialization and Event Listeners ---
+    window.onload = () => {
+        // Attach recalculation handlers to input changes
+        logValueInput.addEventListener('input', calculateAntilog);
+        
+        // Initial calculation on load
+        calculateAntilog();
+    };
+
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

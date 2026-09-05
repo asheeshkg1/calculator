@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+            --secondary-color: #f9fafb; /* Tailwind gray-50 */
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 550px; /* Slightly wider for tabs */
+            width: 95%;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Styles for info-box and highlight-box remain the same for consistency */
+        .info-box {
+            background-color: var(--secondary-color);
+            border-radius: 0.75rem;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-align: left;
+            border: 1px solid #d1fae5; /* Tailwind emerald-100 */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #4b5563; 
+            margin-bottom: 2px;
+        }
+        
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .highlight-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 0.75rem;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .highlight-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .highlight-label {
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        /* Custom tab styling */
+        .nav-tabs .nav-link {
+            color: #10b981; /* emerald-500 */
+            font-weight: 600;
+            border: none;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .nav-tabs .nav-link.active {
+            color: #065f46; /* emerald-800 */
+            background-color: transparent;
+            border-color: var(--primary-color);
+            border-radius: 0;
+        }
+        .nav-tabs {
+            border-bottom: 1px solid #d1fae5; /* emerald-100 */
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">Time Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Calculate the difference between two times or add/subtract duration from a time.</p>
+
+                <!-- Bootstrap Tabs for Mode Selection -->
+                <ul class="nav nav-tabs mb-4" id="calculatorTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="diff-tab" data-bs-toggle="tab" data-bs-target="#time-difference" type="button" role="tab" aria-controls="time-difference" aria-selected="true">Time Difference</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="add-sub-tab" data-bs-toggle="tab" data-bs-target="#time-add-subtract" type="button" role="tab" aria-controls="time-add-subtract" aria-selected="false">Add / Subtract Time</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="calculatorTabContent">
+                    
+                    <!-- Mode 1: Time Difference -->
+                    <div class="tab-pane fade show active" id="time-difference" role="tabpanel" aria-labelledby="diff-tab">
+                        <form id="diffForm" onsubmit="event.preventDefault(); calculateTimeDifference();">
+                            <!-- Start Time Input -->
+                            <div class="mb-4">
+                                <label for="startTimeInput" class="form-label fw-semibold text-gray-700">Start Time</label>
+                                <input type="time" class="form-control rounded-lg p-3" id="startTimeInput" value="09:00" required>
+                            </div>
+
+                            <!-- End Time Input -->
+                            <div class="mb-4">
+                                <label for="endTimeInput" class="form-label fw-semibold text-gray-700">End Time</label>
+                                <input type="time" class="form-control rounded-lg p-3" id="endTimeInput" value="17:00" required>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-custom w-100 btn-lg rounded-xl text-white">Calculate Difference</button>
+                        </form>
+
+                        <!-- Difference Results Area -->
+                        <div class="result-container" id="diffResultsContainer" style="display:none;">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="info-box">
+                                        <p class="info-label">Hours:</p>
+                                        <p class="info-value" id="hoursResult">0</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <div class="info-box">
+                                        <p class="info-label">Minutes:</p>
+                                        <p class="info-value" id="minutesResult">0</p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="info-box">
+                                        <p class="info-label">Seconds:</p>
+                                        <p class="info-value" id="secondsResult">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="highlight-box">
+                                <p class="highlight-value" id="totalSecondsResult">0</p>
+                                <p class="highlight-label">Total Seconds Elapsed</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mode 2: Time Add/Subtract -->
+                    <div class="tab-pane fade" id="time-add-subtract" role="tabpanel" aria-labelledby="add-sub-tab">
+                        <form id="addSubForm" onsubmit="event.preventDefault(); calculateTargetTime();">
+                            <!-- Initial Time Input -->
+                            <div class="mb-4">
+                                <label for="initialTimeInput" class="form-label fw-semibold text-gray-700">Initial Time (HH:MM)</label>
+                                <input type="time" class="form-control rounded-lg p-3" id="initialTimeInput" value="12:00" required>
+                            </div>
+
+                            <!-- Duration Inputs (H/M/S) -->
+                            <label class="form-label fw-semibold text-gray-700 mb-2">Duration (H/M/S)</label>
+                            <div class="row mb-4">
+                                <div class="col">
+                                    <input type="number" min="0" step="1" class="form-control rounded-lg p-3" id="durationHours" value="2" placeholder="Hours">
+                                </div>
+                                <div class="col">
+                                    <input type="number" min="0" step="1" class="form-control rounded-lg p-3" id="durationMinutes" value="30" placeholder="Minutes">
+                                </div>
+                                <div class="col">
+                                    <input type="number" min="0" step="1" class="form-control rounded-lg p-3" id="durationSeconds" value="0" placeholder="Seconds">
+                                </div>
+                            </div>
+
+                            <!-- Add/Subtract Selector -->
+                            <div class="mb-4">
+                                <label for="actionSelect" class="form-label fw-semibold text-gray-700">Action</label>
+                                <select class="form-select rounded-lg p-3" id="actionSelect">
+                                    <option value="add">Add (+)</option>
+                                    <option value="subtract">Subtract (-)</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-custom w-100 btn-lg rounded-xl text-white">Find Result Time</button>
+                        </form>
+
+                        <!-- Add/Subtract Results Area -->
+                        <div class="result-container" id="targetResultsContainer" style="display:none;">
+                            <div class="highlight-box">
+                                <p class="highlight-label">Result Time:</p>
+                                <p class="highlight-value" id="targetTimeResult">-- : -- : --</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Select a mode and enter times to calculate.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Mode 1: Time Difference Elements ---
+    const hoursResult = document.getElementById('hoursResult');
+    const minutesResult = document.getElementById('minutesResult');
+    const secondsResult = document.getElementById('secondsResult');
+    const totalSecondsResult = document.getElementById('totalSecondsResult');
+    const startTimeInput = document.getElementById('startTimeInput');
+    const endTimeInput = document.getElementById('endTimeInput');
+    const diffResultsContainer = document.getElementById('diffResultsContainer');
+    
+    // --- Mode 2: Time Add/Subtract Elements ---
+    const initialTimeInput = document.getElementById('initialTimeInput');
+    const durationHours = document.getElementById('durationHours');
+    const durationMinutes = document.getElementById('durationMinutes');
+    const durationSeconds = document.getElementById('durationSeconds');
+    const actionSelect = document.getElementById('actionSelect');
+    const targetTimeResult = document.getElementById('targetTimeResult');
+    const targetResultsContainer = document.getElementById('targetResultsContainer');
+
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    /**
+     * Helper function to display difference results.
+     */
+    function displayDiffResult(hours, minutes, seconds, totalSeconds, msg) {
+        hoursResult.textContent = hours;
+        minutesResult.textContent = minutes;
+        secondsResult.textContent = seconds;
+        totalSecondsResult.textContent = totalSeconds.toLocaleString();
+        messageElement.textContent = msg;
+        messageElement.classList.remove('text-red-500');
+        diffResultsContainer.style.display = 'block';
+        targetResultsContainer.style.display = 'none'; // Hide other result
+    }
+
+    /**
+     * Helper function to display add/subtract result.
+     */
+    function displayAddSubResult(timeString, msg) {
+        targetTimeResult.textContent = timeString;
+        messageElement.textContent = msg;
+        messageElement.classList.remove('text-red-500');
+        targetResultsContainer.style.display = 'block';
+        diffResultsContainer.style.display = 'none'; // Hide other result
+    }
+
+    /**
+     * Displays an error message.
+     */
+    function displayError(msg) {
+        messageElement.textContent = msg;
+        messageElement.classList.add('text-red-500');
+        diffResultsContainer.style.display = 'none';
+        targetResultsContainer.style.display = 'none';
+    }
+
+    // Function to convert "HH:MM" time string to total seconds from a common epoch (today)
+    function timeToSeconds(timeStr) {
+        // Create a temporary Date object for today's date
+        const today = new Date();
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        
+        // Set the time on a consistent date/time reference (e.g., today at the specified time)
+        const timeRef = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, minutes, 0, 0);
+        return timeRef.getTime(); // Return milliseconds since epoch
+    }
+
+    // --- Mode 1 Logic: Time Difference ---
+    function calculateTimeDifference() {
+        const startString = startTimeInput.value;
+        const endString = endTimeInput.value;
+
+        if (!startString || !endString) {
+            displayError('Please select both Start and End Times.');
+            return;
+        }
+
+        const startTimeMs = timeToSeconds(startString);
+        let endTimeMs = timeToSeconds(endString);
+        
+        let timeDiffMs = endTimeMs - startTimeMs;
+        let isForward = timeDiffMs >= 0;
+
+        if (!isForward) {
+            // Assume the difference crosses midnight (e.g., 23:00 to 02:00).
+            // Add 24 hours in milliseconds (24 * 60 * 60 * 1000)
+            timeDiffMs += 86400000; 
+            isForward = true; // The duration is always positive
+        }
+
+        const totalSeconds = Math.floor(timeDiffMs / 1000);
+        
+        const hours = Math.floor(totalSeconds / 3600);
+        const remainingSecondsAfterHours = totalSeconds % 3600;
+        const minutes = Math.floor(remainingSecondsAfterHours / 60);
+        const seconds = remainingSecondsAfterHours % 60;
+        
+        let message;
+        if (totalSeconds === 0) {
+            message = 'The times are the same.';
+        } else {
+            const direction = isForward ? 'elapsed' : 'crossing midnight';
+            message = `The duration ${direction} between the two times is:`;
+        }
+
+        displayDiffResult(
+            hours, 
+            minutes, 
+            seconds, 
+            totalSeconds, 
+            message
+        );
+    }
+
+    // --- Mode 2 Logic: Time Add/Subtract ---
+    function calculateTargetTime() {
+        const initialTimeString = initialTimeInput.value;
+        const hours = parseInt(durationHours.value) || 0;
+        const minutes = parseInt(durationMinutes.value) || 0;
+        const seconds = parseInt(durationSeconds.value) || 0;
+        const action = actionSelect.value;
+        
+        if (!initialTimeString) {
+            displayError('Please select an Initial Time.');
+            return;
+        }
+        
+        if (hours === 0 && minutes === 0 && seconds === 0) {
+            displayError('Please enter a duration (Hours, Minutes, or Seconds) to add or subtract.');
+            return;
+        }
+
+        // Get the initial time based on today's date
+        const today = new Date();
+        const [h, m] = initialTimeString.split(':').map(Number);
+        
+        // Initialize Date object with today's date and the input time (set seconds to 0)
+        let resultTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), h, m, 0, 0); 
+        
+        // Calculate change
+        const hourChange = action === 'add' ? hours : -hours;
+        const minuteChange = action === 'add' ? minutes : -minutes;
+        const secondChange = action === 'add' ? seconds : -seconds;
+
+        // Apply changes using set methods
+        resultTime.setHours(resultTime.getHours() + hourChange);
+        resultTime.setMinutes(resultTime.getMinutes() + minuteChange);
+        resultTime.setSeconds(resultTime.getSeconds() + secondChange);
+
+        // Format the time as HH:MM:SS
+        const formattedTime = resultTime.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // Use 24-hour format (HH:MM:SS)
+        });
+
+        const actionText = action === 'add' ? 'adding' : 'subtracting';
+        let message = `The resulting time after ${actionText} the duration is:`;
+        
+        displayAddSubResult(formattedTime, message);
+    }
+    
+    // --- Initialization and Default Values ---
+    window.onload = () => {
+        // Run default calculation for the active tab (Difference)
+        calculateTimeDifference();
+    };
+
+    // Ensure the correct result container is hidden/shown when tabs change
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('#calculatorTabs button');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                // Reset display when switching tabs
+                messageElement.textContent = 'Select a mode and enter times to calculate.';
+                messageElement.classList.remove('text-red-500');
+                diffResultsContainer.style.display = 'none';
+                targetResultsContainer.style.display = 'none';
+            });
+        });
+    });
+
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

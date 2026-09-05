@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Least Common Multiple (LCM) Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 550px;
+            width: 95%;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        /* Input and Selection Styling */
+        .input-group-text {
+            background-color: #d1fae5; /* emerald-100 */
+            border-color: #a7f3d0; /* emerald-200 */
+            color: #065f46;
+            font-weight: 600;
+        }
+        .form-control:focus {
+            border-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        
+        /* Result Styling */
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 1rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .result-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 20px;
+            border-radius: 0.75rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .final-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">Least Common Multiple (LCM) Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Find the smallest positive integer that is divisible by two or more numbers.</p>
+
+                <form id="lcmForm" onsubmit="event.preventDefault(); calculateLCM();">
+                    
+                    <!-- Numbers Input -->
+                    <h5 class="text-emerald-500 fw-bold mb-3">Input Numbers</h5>
+                    <div class="input-group mb-5 rounded-xl shadow-sm">
+                        <textarea class="form-control p-3" id="inputNumbers" rows="3" placeholder="e.g., 4, 6, 8 or 10 15 20" required oninput="calculateLCM()">4, 6</textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate LCM</button>
+                </form>
+
+                <!-- Results Area -->
+                <div class="result-container" id="lcmResultsContainer" style="display:none;">
+                    <p class="result-label mb-3 text-lg fw-bold">Result</p>
+
+                    <div class="result-box">
+                        <p class="result-label">The Least Common Multiple is:</p>
+                        <p class="final-value" id="finalResult">0</p>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Enter at least two positive integers.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Result Elements ---
+    const finalResultElement = document.getElementById('finalResult');
+    const lcmResultsContainer = document.getElementById('lcmResultsContainer');
+
+    // --- Input Elements ---
+    const inputNumbers = document.getElementById('inputNumbers');
+    
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    /**
+     * Finds the Greatest Common Divisor (GCD) of two numbers using the Euclidean algorithm.
+     */
+    function gcd(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        return b === 0 ? a : gcd(b, a % b);
+    }
+    
+    /**
+     * Finds the Least Common Multiple (LCM) of two numbers using the GCD relationship:
+     * LCM(a, b) = (|a * b|) / GCD(a, b)
+     */
+    function lcm(a, b) {
+        if (a === 0 || b === 0) return 0;
+        // Use BigInt for multiplication to prevent overflow before division
+        const product = BigInt(a) * BigInt(b);
+        const commonDivisor = BigInt(gcd(a, b));
+        
+        // Ensure result is converted back to a Number if small enough, otherwise keep as string
+        const result = product / commonDivisor;
+        return Number(result); 
+    }
+    
+    /**
+     * Helper function to display results.
+     */
+    function displayResult(result) {
+        // Use BigInt toString() if result is huge, otherwise standard Number formatting
+        const displayValue = typeof result === 'bigint' ? result.toString() : result.toLocaleString('en-US');
+        
+        finalResultElement.textContent = displayValue;
+        
+        messageElement.textContent = 'LCM calculation successful.';
+        messageElement.classList.remove('error-message', 'text-red-500');
+        messageElement.classList.add('text-gray-500');
+        lcmResultsContainer.style.display = 'block';
+    }
+
+    /**
+     * Displays an error message.
+     */
+    function displayError(msg) {
+        messageElement.textContent = msg;
+        messageElement.classList.add('error-message', 'text-red-500');
+        messageElement.classList.remove('text-gray-500');
+        lcmResultsContainer.style.display = 'none';
+        finalResultElement.textContent = '0';
+    }
+    
+    /**
+     * Main function to calculate the LCM of a list of numbers.
+     */
+    function calculateLCM() {
+        try {
+            // 1. Get and parse inputs (split by comma, space, or newline)
+            const inputString = inputNumbers.value.trim();
+            
+            // Filter out non-positive integers
+            const numbers = inputString
+                .split(/[\s,]+/) 
+                .map(n => parseInt(n))
+                .filter(n => !isNaN(n) && n > 0 && Number.isInteger(n));
+
+            // 2. Validate
+            if (numbers.length < 2) {
+                displayError('Please enter at least two positive integers for calculation.');
+                return;
+            }
+
+            // 3. Calculate LCM iteratively: LCM(a, b, c) = LCM(LCM(a, b), c)
+            let resultLCM = numbers[0];
+            for (let i = 1; i < numbers.length; i++) {
+                resultLCM = lcm(resultLCM, numbers[i]);
+            }
+            
+            // 4. Display the result
+            displayResult(resultLCM);
+            
+        } catch (e) {
+            console.error(e);
+            displayError('An unexpected error occurred during calculation.');
+        }
+    }
+
+    // --- Initialization and Event Listeners ---
+    window.onload = () => {
+        // Initial calculation on load (LCM of 4 and 6 is 12)
+        calculateLCM();
+    };
+
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

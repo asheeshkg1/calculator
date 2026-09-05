@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arctan Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+            --secondary-color: #f9fafb; /* Tailwind gray-50 */
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 550px;
+            width: 95%;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        /* Input and Selection Styling */
+        .input-group-text {
+            background-color: #d1fae5; /* emerald-100 */
+            border-color: #a7f3d0; /* emerald-200 */
+            color: #065f46;
+            font-weight: 600;
+        }
+        .form-control:focus {
+            border-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        
+        /* Result Styling */
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 1rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+        }
+        
+        .result-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 20px;
+            border-radius: 0.75rem;
+            flex-basis: 48%;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .final-value {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+        
+        .formula-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background-color: var(--secondary-color);
+            border-radius: 0.75rem;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            border: 1px solid #d1fae5;
+            color: #065f46;
+        }
+        .info-box strong {
+            font-weight: 600;
+        }
+        .error-message {
+            color: var(--danger-color);
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">Arctan Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Calculate the angle $\theta$ in radians and degrees, where $\tan(\theta) = x$.</p>
+
+                <form id="arctanForm" onsubmit="event.preventDefault(); calculateArctan();">
+                    
+                    <!-- Value Input (x) -->
+                    <div class="mb-4">
+                        <label for="valueInput" class="form-label fw-semibold text-gray-700">Value ($x$) for Arctan (Any Real Number)</label>
+                        <!-- Removed min="-1" max="1" as the domain is all real numbers -->
+                        <input type="number" step="any" class="form-control p-3" id="valueInput" value="1.0" required oninput="calculateArctan()">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate Arctan ($\tan^{-1}(x)$)</button>
+                </form>
+
+                <!-- Results Area -->
+                <div class="result-container" id="arctanResultsContainer" style="display:none;">
+                    <p class="result-label" id="formulaLabel">Result for $\theta = \arctan(x)$</p>
+
+                    <div class="result-row">
+                        <div class="result-box">
+                            <p class="result-label">Angle in Radians</p>
+                            <p class="final-value" id="finalRadians">0</p>
+                        </div>
+                         <div class="result-box">
+                            <p class="result-label">Angle in Degrees</p>
+                            <p class="final-value" id="finalDegrees">0</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <p><strong>Note:</strong> Arctan returns the principal value in the range $(-\frac{\pi}{2}, \frac{\pi}{2})$ radians ($-90^\circ$ to $90^\circ$).</p>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Enter a value to find its inverse tangent.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Constants for calculation and display
+    const RADIANS_TO_DEGREES = 180 / Math.PI;
+
+    // --- Result Elements ---
+    const finalRadians = document.getElementById('finalRadians');
+    const finalDegrees = document.getElementById('finalDegrees');
+    const arctanResultsContainer = document.getElementById('arctanResultsContainer');
+
+    // --- Input Elements ---
+    const valueInput = document.getElementById('valueInput');
+    
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    /**
+     * Helper function to display results.
+     */
+    function displayResult(radians, degrees, x) {
+        
+        finalRadians.textContent = radians.toFixed(6);
+        finalDegrees.textContent = degrees.toFixed(6);
+        
+        messageElement.textContent = `The angle whose tangent is ${x} is calculated below.`;
+        messageElement.classList.remove('error-message');
+        messageElement.classList.remove('text-red-500');
+        messageElement.classList.add('text-gray-500');
+        arctanResultsContainer.style.display = 'block';
+    }
+
+    /**
+     * Displays an error message.
+     */
+    function displayError(msg) {
+        messageElement.textContent = msg;
+        messageElement.classList.add('error-message');
+        messageElement.classList.add('text-red-500');
+        arctanResultsContainer.style.display = 'none';
+    }
+    
+    /**
+     * Main function to calculate the Arctan.
+     */
+    function calculateArctan() {
+        const x = parseFloat(valueInput.value);
+
+        // Validation: Check only for NaN, as the domain of arctan(x) is all real numbers (R)
+        if (isNaN(x)) {
+            displayError('Please enter a valid numerical value.');
+            return;
+        }
+        
+        // 1. Calculate Arctan in Radians (Math.atan is used)
+        const radians = Math.atan(x);
+        
+        // 2. Convert Radians to Degrees
+        const degrees = radians * RADIANS_TO_DEGREES;
+
+        // 3. Display the result
+        displayResult(radians, degrees, x);
+    }
+
+    // --- Initialization and Event Listeners ---
+    window.onload = () => {
+        // Attach recalculation handlers to input changes
+        valueInput.addEventListener('input', calculateArctan);
+        
+        // Initial calculation on load (default value is 1.0)
+        calculateArctan();
+    };
+
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>
