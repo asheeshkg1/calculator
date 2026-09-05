@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 550px;
+            width: 95%;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        /* Input and Selection Styling */
+        .input-group-text {
+            background-color: #d1fae5; /* emerald-100 */
+            border-color: #a7f3d0; /* emerald-200 */
+            color: #065f46;
+            font-weight: 600;
+        }
+        .form-control:focus {
+            border-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        
+        /* Nav Pills Styling */
+        .nav-pills .nav-link {
+            color: #065f46;
+            background-color: #d1fae5;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .nav-pills .nav-link.active,
+        .nav-pills .nav-link:hover {
+            color: white;
+            background-color: var(--primary-color);
+        }
+        
+        /* Result Styling */
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 1rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .result-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 20px;
+            border-radius: 0.75rem;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .final-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">Percentage Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Solve three common types of percentage problems instantly.</p>
+
+                <!-- Nav Tabs -->
+                <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+                    <li class="nav-item w-1/3" role="presentation">
+                        <button class="nav-link w-full rounded-xl active" id="type1-tab" data-bs-toggle="pill" data-bs-target="#type1" type="button" role="tab" aria-controls="type1" aria-selected="true">X% of Y</button>
+                    </li>
+                    <li class="nav-item w-1/3" role="presentation">
+                        <button class="nav-link w-full rounded-xl" id="type2-tab" data-bs-toggle="pill" data-bs-target="#type2" type="button" role="tab" aria-controls="type2" aria-selected="false">X is Y%</button>
+                    </li>
+                    <li class="nav-item w-1/3" role="presentation">
+                        <button class="nav-link w-full rounded-xl" id="type3-tab" data-bs-toggle="pill" data-bs-target="#type3" type="button" role="tab" aria-controls="type3" aria-selected="false">% Change</button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content" id="pills-tabContent">
+                    
+                    <!-- Tab 1: What is X% of Y? -->
+                    <div class="tab-pane fade show active" id="type1" role="tabpanel" aria-labelledby="type1-tab">
+                        <form onsubmit="event.preventDefault(); calculateType1();">
+                            <h5 class="text-emerald-500 fw-bold mb-3">Mode 1: What is $\text{X\%}$ of $\text{Y}$?</h5>
+                            
+                            <!-- Input X (Percentage) -->
+                            <div class="input-group mb-3 rounded-xl shadow-sm">
+                                <span class="input-group-text">X: Percentage %</span>
+                                <input type="number" class="form-control p-3" id="t1_percentage" value="15" step="any" required oninput="calculateType1()">
+                            </div>
+                            
+                            <!-- Input Y (Total Number) -->
+                            <div class="input-group mb-5 rounded-xl shadow-sm">
+                                <span class="input-group-text">Y: Total Number</span>
+                                <input type="number" class="form-control p-3" id="t1_total" value="200" step="any" required oninput="calculateType1()">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate Result</button>
+                        </form>
+
+                        <div class="result-container" id="t1ResultsContainer" style="display:none;">
+                            <p class="result-label mb-3 text-lg fw-bold">Result</p>
+                            <div class="result-box">
+                                <p class="result-label" id="t1ResultLabel">15% of 200 is:</p>
+                                <p class="final-value" id="t1FinalResult">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: X is what % of Y? -->
+                    <div class="tab-pane fade" id="type2" role="tabpanel" aria-labelledby="type2-tab">
+                        <form onsubmit="event.preventDefault(); calculateType2();">
+                            <h5 class="text-emerald-500 fw-bold mb-3">Mode 2: $\text{X}$ is what $\%$ of $\text{Y}$?</h5>
+                            
+                            <!-- Input X (Part) -->
+                            <div class="input-group mb-3 rounded-xl shadow-sm">
+                                <span class="input-group-text">X: Part Number</span>
+                                <input type="number" class="form-control p-3" id="t2_part" value="50" step="any" required oninput="calculateType2()">
+                            </div>
+                            
+                            <!-- Input Y (Total) -->
+                            <div class="input-group mb-5 rounded-xl shadow-sm">
+                                <span class="input-group-text">Y: Total Number</span>
+                                <input type="number" class="form-control p-3" id="t2_total" value="200" step="any" required oninput="calculateType2()">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate Percentage</button>
+                        </form>
+
+                        <div class="result-container" id="t2ResultsContainer" style="display:none;">
+                            <p class="result-label mb-3 text-lg fw-bold">Result</p>
+                            <div class="result-box">
+                                <p class="result-label" id="t2ResultLabel">50 is what percent of 200?</p>
+                                <p class="final-value" id="t2FinalResult">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab 3: Percentage Change -->
+                    <div class="tab-pane fade" id="type3" role="tabpanel" aria-labelledby="type3-tab">
+                        <form onsubmit="event.preventDefault(); calculateType3();">
+                            <h5 class="text-emerald-500 fw-bold mb-3">Mode 3: Percentage Change</h5>
+                            
+                            <!-- Input Old Value -->
+                            <div class="input-group mb-3 rounded-xl shadow-sm">
+                                <span class="input-group-text">Old Value (Start)</span>
+                                <input type="number" class="form-control p-3" id="t3_old" value="100" step="any" required oninput="calculateType3()">
+                            </div>
+                            
+                            <!-- Input New Value -->
+                            <div class="input-group mb-5 rounded-xl shadow-sm">
+                                <span class="input-group-text">New Value (End)</span>
+                                <input type="number" class="form-control p-3" id="t3_new" value="125" step="any" required oninput="calculateType3()">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate Change</button>
+                        </form>
+
+                        <div class="result-container" id="t3ResultsContainer" style="display:none;">
+                            <p class="result-label mb-3 text-lg fw-bold">Result</p>
+                            <div class="result-box">
+                                <p class="result-label" id="t3ResultLabel">Change from 100 to 125:</p>
+                                <p class="final-value" id="t3FinalResult">0%</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Choose a percentage calculation type above.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    /**
+     * Helper function to display messages (error or success).
+     */
+    function displayMessage(msg, isError = false) {
+        messageElement.textContent = msg;
+        if (isError) {
+            messageElement.classList.add('error-message', 'text-red-500');
+            messageElement.classList.remove('text-gray-500');
+        } else {
+            messageElement.classList.remove('error-message', 'text-red-500');
+            messageElement.classList.add('text-gray-500');
+        }
+    }
+
+    // --- Type 1: What is X% of Y? ---
+    const t1_percentage = document.getElementById('t1_percentage');
+    const t1_total = document.getElementById('t1_total');
+    const t1FinalResult = document.getElementById('t1FinalResult');
+    const t1ResultLabel = document.getElementById('t1ResultLabel');
+    const t1ResultsContainer = document.getElementById('t1ResultsContainer');
+
+    function calculateType1() {
+        const x = parseFloat(t1_percentage.value);
+        const y = parseFloat(t1_total.value);
+
+        if (isNaN(x) || isNaN(y)) {
+            t1ResultsContainer.style.display = 'none';
+            return;
+        }
+
+        // Formula: Result = (X / 100) * Y
+        const result = (x / 100) * y;
+        
+        t1FinalResult.textContent = result.toFixed(2);
+        t1ResultLabel.textContent = `${x}% of ${y} is:`;
+        t1ResultsContainer.style.display = 'block';
+        displayMessage('Type 1 calculation successful.', false);
+    }
+    
+    // --- Type 2: X is what % of Y? ---
+    const t2_part = document.getElementById('t2_part');
+    const t2_total = document.getElementById('t2_total');
+    const t2FinalResult = document.getElementById('t2FinalResult');
+    const t2ResultLabel = document.getElementById('t2ResultLabel');
+    const t2ResultsContainer = document.getElementById('t2ResultsContainer');
+
+    function calculateType2() {
+        const x = parseFloat(t2_part.value);
+        const y = parseFloat(t2_total.value);
+
+        if (isNaN(x) || isNaN(y)) {
+            t2ResultsContainer.style.display = 'none';
+            return;
+        }
+
+        if (y === 0) {
+             t2ResultsContainer.style.display = 'none';
+             displayMessage('Error: Cannot divide by zero (Total number Y cannot be 0).', true);
+             return;
+        }
+
+        // Formula: Result = (X / Y) * 100
+        const result = (x / y) * 100;
+        
+        t2FinalResult.textContent = `${result.toFixed(2)}%`;
+        t2ResultLabel.textContent = `${x} is what percent of ${y}?`;
+        t2ResultsContainer.style.display = 'block';
+        displayMessage('Type 2 calculation successful.', false);
+    }
+    
+    // --- Type 3: Percentage Change ---
+    const t3_old = document.getElementById('t3_old');
+    const t3_new = document.getElementById('t3_new');
+    const t3FinalResult = document.getElementById('t3FinalResult');
+    const t3ResultLabel = document.getElementById('t3ResultLabel');
+    const t3ResultsContainer = document.getElementById('t3ResultsContainer');
+
+    function calculateType3() {
+        const oldVal = parseFloat(t3_old.value);
+        const newVal = parseFloat(t3_new.value);
+
+        if (isNaN(oldVal) || isNaN(newVal)) {
+            t3ResultsContainer.style.display = 'none';
+            return;
+        }
+
+        if (oldVal === 0) {
+             t3ResultsContainer.style.display = 'none';
+             displayMessage('Error: Old Value cannot be zero when calculating percentage change.', true);
+             return;
+        }
+
+        // Formula: Change = ((New - Old) / Old) * 100
+        const change = ((newVal - oldVal) / oldVal) * 100;
+        
+        // Determine label and style
+        let trend = 'Change';
+        if (change > 0) {
+            trend = 'Increase';
+        } else if (change < 0) {
+            trend = 'Decrease';
+        }
+
+        t3FinalResult.textContent = `${Math.abs(change).toFixed(2)}% ${trend}`;
+        t3ResultLabel.textContent = `${trend} from ${oldVal} to ${newVal}:`;
+        t3ResultsContainer.style.display = 'block';
+        displayMessage('Percentage change calculation successful.', false);
+    }
+
+    // --- Tab Switching Logic (to recalculate on switch) ---
+    const tabElements = [
+        document.getElementById('type1-tab'),
+        document.getElementById('type2-tab'),
+        document.getElementById('type3-tab')
+    ];
+    
+    tabElements.forEach(tab => {
+        // Use the Bootstrap 'shown.bs.tab' event to trigger calculation when a tab becomes active
+        tab.addEventListener('shown.bs.tab', function (e) {
+            const targetId = e.target.getAttribute('data-bs-target').substring(1);
+            if (targetId === 'type1') calculateType1();
+            else if (targetId === 'type2') calculateType2();
+            else if (targetId === 'type3') calculateType3();
+        });
+    });
+
+    // --- Initialization ---
+    window.onload = () => {
+        // Run initial calculation for the active tab (Type 1)
+        calculateType1();
+    };
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

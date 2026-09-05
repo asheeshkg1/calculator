@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAT Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+            --secondary-color: #f9fafb; /* Tailwind gray-50 */
+            --tab-active-bg: #059669; /* emerald-600 */
+            --tab-active-text: white;
+            --tab-hover-bg: #d1fae5;
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 550px;
+            width: 95%;
+        }
+
+        /* Tab Styling */
+        .nav-pills .nav-link {
+            color: #10b981;
+            background-color: #fff;
+            border: 1px solid #10b981;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .nav-pills .nav-link.active {
+            color: var(--tab-active-text);
+            background-color: var(--tab-active-bg);
+            border-color: var(--tab-active-bg);
+        }
+        
+        .nav-pills .nav-link:hover:not(.active) {
+            background-color: var(--tab-hover-bg);
+            color: var(--tab-active-bg);
+            border-color: var(--tab-active-bg);
+        }
+        /* End Tab Styling */
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Result Boxes */
+        .info-box {
+            background-color: var(--secondary-color);
+            border-radius: 0.75rem;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-align: left;
+            border: 1px solid #d1fae5; /* Tailwind emerald-100 */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #4b5563; 
+            margin-bottom: 2px;
+        }
+        
+        .info-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #065f46;
+        }
+
+        .highlight-box {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 0.75rem;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .highlight-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .highlight-label {
+            font-size: 1rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        /* Input specific styling */
+        .input-group-text {
+            background-color: #d1fae5; /* emerald-100 */
+            border-color: #a7f3d0; /* emerald-200 */
+            color: #065f46;
+            font-weight: 600;
+        }
+        .form-select.currency-select {
+            /* Custom styling for the select dropdown in the input group */
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            max-width: 7.5rem; /* Fixed width for better visual control */
+        }
+        .form-control:focus {
+            border-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">VAT Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Calculate tax-inclusive amounts or reverse-calculate the base price.</p>
+
+                <!-- Tabs Navigation -->
+                <ul class="nav nav-pills nav-justified mb-4" id="vatTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-xl" id="add-vat-tab" data-bs-toggle="tab" data-bs-target="#add-vat-pane" type="button" role="tab" aria-controls="add-vat-pane" aria-selected="true" onclick="updateMode('add')">Add VAT</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-xl" id="remove-vat-tab" data-bs-toggle="tab" data-bs-target="#remove-vat-pane" type="button" role="tab" aria-controls="remove-vat-pane" aria-selected="false" onclick="updateMode('remove')">Remove VAT</button>
+                    </li>
+                </ul>
+
+                <form id="vatForm" onsubmit="event.preventDefault(); calculateVAT();">
+                    
+                    <!-- Tab Content - Inputs -->
+                    <div class="tab-content" id="vatTabsContent">
+                        
+                        <!-- Add VAT Pane (Base Price -> Total Price) -->
+                        <div class="tab-pane fade show active" id="add-vat-pane" role="tabpanel" aria-labelledby="add-vat-tab" tabindex="0">
+                            <!-- Original Amount Input with Currency Selector -->
+                            <div class="mb-4">
+                                <label for="originalAmountInput" class="form-label fw-semibold text-gray-700">Original Amount (Tax Exclusive)</label>
+                                <div class="input-group">
+                                    <select id="currencySelect" class="form-select currency-select input-group-text rounded-l-lg" required>
+                                        <option value="USD" selected>$ USD</option>
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="GBP">£ GBP</option>
+                                        <option value="INR">₹ INR</option>
+                                        <option value="JPY">¥ JPY</option>
+                                    </select>
+                                    <input type="number" step="0.01" min="0" class="form-control rounded-r-lg p-3" id="originalAmountInput" value="100.00" required oninput="calculateVAT()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Remove VAT Pane (Total Price -> Base Price) -->
+                        <div class="tab-pane fade" id="remove-vat-pane" role="tabpanel" aria-labelledby="remove-vat-tab" tabindex="0">
+                            <!-- Tax Inclusive Amount Input with Currency Selector -->
+                            <div class="mb-4">
+                                <label for="taxInclusiveAmountInput" class="form-label fw-semibold text-gray-700">Tax Inclusive Amount (Final Price)</label>
+                                <div class="input-group">
+                                    <!-- Currency selector is reused from the other tab (read-only for consistency) -->
+                                    <select id="currencySelect2" class="form-select currency-select input-group-text rounded-l-lg" required disabled style="opacity: 0.6;">
+                                        <option value="USD" selected>$ USD</option>
+                                        <option value="EUR">€ EUR</option>
+                                        <option value="GBP">£ GBP</option>
+                                        <option value="INR">₹ INR</option>
+                                        <option value="JPY">¥ JPY</option>
+                                    </select>
+                                    <input type="number" step="0.01" min="0" class="form-control rounded-r-lg p-3" id="taxInclusiveAmountInput" value="120.00" required oninput="calculateVAT()">
+                                </div>
+                                <small class="text-muted ms-2 mt-1 block">Currency setting applies to both tabs.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VAT Rate Input (Shared) -->
+                    <div class="mb-4">
+                        <label for="rateInput" class="form-label fw-semibold text-gray-700">VAT Rate</label>
+                        <div class="input-group">
+                            <input type="number" step="0.1" min="0" max="100" class="form-control rounded-l-lg p-3" id="rateInput" value="20.0" required oninput="calculateVAT()">
+                            <span class="input-group-text rounded-r-lg p-3">%</span>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom w-100 btn-lg rounded-xl text-white mt-2">Calculate VAT</button>
+                </form>
+
+                <!-- Results Area -->
+                <div class="result-container" id="vatResultsContainer" style="display:none;">
+                    <div class="highlight-box">
+                        <p class="highlight-label" id="finalResultLabel">Total Price (Tax Inclusive)</p>
+                        <p class="highlight-value" id="finalResultValue">$0.00</p>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="info-box">
+                                <p class="info-label" id="taxAmountLabel">VAT Amount (20.0%):</p>
+                                <p class="info-value" id="taxAmountResult">$0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Select a mode and enter the amount and VAT rate above.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Result Elements ---
+    const finalResultValue = document.getElementById('finalResultValue');
+    const finalResultLabel = document.getElementById('finalResultLabel');
+    const taxAmountResult = document.getElementById('taxAmountResult');
+    const taxAmountLabel = document.getElementById('taxAmountLabel');
+    const vatResultsContainer = document.getElementById('vatResultsContainer');
+
+    // --- Input Elements ---
+    const originalAmountInput = document.getElementById('originalAmountInput');
+    const taxInclusiveAmountInput = document.getElementById('taxInclusiveAmountInput');
+    const rateInput = document.getElementById('rateInput');
+    const currencySelect = document.getElementById('currencySelect');
+    
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    // Track current calculation mode ('add' or 'remove')
+    let currentMode = 'add'; 
+
+    /**
+     * Helper function to display results.
+     */
+    function displayResult(resultValue, taxAmount, taxRate, originalInputAmount) {
+        const selectedCurrency = currencySelect.value;
+
+        // Formatter for selected currency
+        const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: selectedCurrency, 
+            minimumFractionDigits: 2,
+        });
+
+        const formattedResult = formatter.format(resultValue);
+        const formattedTaxAmount = formatter.format(taxAmount);
+        
+        finalResultValue.textContent = formattedResult;
+        taxAmountResult.textContent = formattedTaxAmount;
+        
+        // Update labels based on mode
+        const formattedInputAmount = formatter.format(originalInputAmount);
+        
+        if (currentMode === 'add') {
+            finalResultLabel.textContent = 'Total Price (Tax Inclusive)';
+            taxAmountLabel.textContent = `VAT Amount (${taxRate}%):`;
+            messageElement.textContent = `Base price ${formattedInputAmount} + ${formattedTaxAmount} VAT = ${formattedResult}.`;
+        } else { // remove mode
+            finalResultLabel.textContent = 'Original Price (Tax Exclusive)';
+            taxAmountLabel.textContent = `VAT Amount (${taxRate}%):`;
+            messageElement.textContent = `Total price ${formattedInputAmount} - ${formattedTaxAmount} VAT = ${formattedResult}.`;
+        }
+
+        messageElement.classList.remove('text-red-500');
+        vatResultsContainer.style.display = 'block';
+    }
+
+    /**
+     * Displays an error message.
+     */
+    function displayError(msg) {
+        messageElement.textContent = msg;
+        messageElement.classList.add('text-red-500');
+        vatResultsContainer.style.display = 'none';
+    }
+    
+    /**
+     * Calculates the final price when adding VAT.
+     * Total = Base * (1 + Rate / 100)
+     */
+    function calculateAddVAT(base, rate) {
+        const taxMultiplier = 1 + (rate / 100);
+        const total = base * taxMultiplier;
+        const taxAmount = total - base;
+        displayResult(total, taxAmount, rate, base);
+    }
+    
+    /**
+     * Calculates the base price when removing (reverse calculating) VAT.
+     * Base = Total / (1 + Rate / 100)
+     */
+    function calculateRemoveVAT(total, rate) {
+        const taxDivisor = 1 + (rate / 100);
+        const base = total / taxDivisor;
+        const taxAmount = total - base;
+        displayResult(base, taxAmount, rate, total);
+    }
+
+    /**
+     * Main function to route calculation based on active tab.
+     */
+    function calculateVAT() {
+        const rate = parseFloat(rateInput.value);
+
+        if (isNaN(rate) || rate < 0 || rate > 1000) {
+            displayError('Please enter a valid VAT Rate (0 to 1000%).');
+            return;
+        }
+
+        if (currentMode === 'add') {
+            const originalAmount = parseFloat(originalAmountInput.value);
+            if (isNaN(originalAmount) || originalAmount < 0) {
+                displayError('Please enter a valid Original Amount.');
+                return;
+            }
+            calculateAddVAT(originalAmount, rate);
+        } else { // remove mode
+            const taxInclusiveAmount = parseFloat(taxInclusiveAmountInput.value);
+            if (isNaN(taxInclusiveAmount) || taxInclusiveAmount < 0) {
+                displayError('Please enter a valid Tax Inclusive Amount.');
+                return;
+            }
+            calculateRemoveVAT(taxInclusiveAmount, rate);
+        }
+    }
+
+    /**
+     * Updates the calculation mode and triggers a recalculation.
+     */
+    function updateMode(mode) {
+        currentMode = mode;
+        // Also ensure currency selectors are in sync
+        const currencyValue = currencySelect.value;
+        document.getElementById('currencySelect2').value = currencyValue;
+        calculateVAT();
+    }
+    
+    // --- Initialization and Event Listeners ---
+    window.onload = () => {
+        // Since currencySelect is tied to the 'add' pane, sync the 'remove' pane's selector initially
+        document.getElementById('currencySelect2').value = currencySelect.value;
+
+        // Attach recalculation handlers to input changes
+        rateInput.addEventListener('input', calculateVAT);
+        currencySelect.addEventListener('change', () => {
+            document.getElementById('currencySelect2').value = currencySelect.value;
+            calculateVAT();
+        });
+        
+        // This is a proxy for the currency select in the remove tab to keep them in sync
+        // Note: it is disabled in HTML, but listening just in case
+        document.getElementById('currencySelect2').addEventListener('change', () => {
+             currencySelect.value = document.getElementById('currencySelect2').value;
+             calculateVAT();
+        });
+        
+        // Attach event listeners for input fields in both tabs (retrigger calculation on change)
+        originalAmountInput.addEventListener('input', calculateVAT);
+        taxInclusiveAmountInput.addEventListener('input', calculateVAT);
+        
+        // Set initial mode to 'add' and run calculation on load
+        updateMode('add');
+    };
+
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

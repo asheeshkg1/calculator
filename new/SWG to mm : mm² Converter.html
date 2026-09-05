@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWG to mm / mm² Converter</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Inter', sans-serif;
+            padding-top: 20px;
+        }
+
+        .card {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            border: none;
+        }
+
+        .result-box {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .result-box.error {
+            background-color: #dc3545;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .unit-label {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card p-4">
+                <h1 class="card-title text-center text-primary mb-4">SWG to mm / $\text{mm}^2$ Converter</h1>
+                <p class="text-center text-muted">Instantly convert Standard Wire Gauge (SWG) size to metric diameter and cross-sectional area.</p>
+
+                <!-- Input Form: Select SWG -->
+                <form id="gaugeForm" onsubmit="event.preventDefault(); convertSWG();">
+
+                    <!-- SWG Select Dropdown -->
+                    <div class="mb-4">
+                        <label for="swgSelect" class="form-label">Select SWG Size</label>
+                        <select class="form-select form-select-lg rounded-lg" id="swgSelect" required>
+                            <option value="" disabled selected>Choose a gauge size</option>
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 btn-lg">Convert</button>
+                </form>
+            </div>
+
+            <!-- Results Area -->
+            <div id="results" class="result-box">
+                <p class="mb-0">Select an SWG size and press Convert.</p>
+            </div>
+
+            <!-- Conversion Details -->
+            <div class="card p-3 mt-3 bg-light">
+                <h5 class="text-secondary">Conversion Basis</h5>
+                <small id="calcDetails" class="text-muted">
+                    Conversion uses standard values for solid conductor sizes defined by the Imperial SWG system. Diameters are converted from inches to $\text{mm}$, and area is calculated as $\pi \cdot (D/2)^2$.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // SWG (Standard Wire Gauge) Conductor Data Lookup Table
+    // Data includes diameter in mm and calculated area in mm² for common gauges.
+    const SWG_DATA_LOOKUP = [
+        // SWG gauges are specified by diameter in inches, which we convert to mm and mm²
+        { swg: "7/0", diameter_mm: 12.700, area_mm2: 126.68 },
+        { swg: "6/0", diameter_mm: 11.786, area_mm2: 109.08 },
+        { swg: "5/0", diameter_mm: 10.973, area_mm2: 94.57 },
+        { swg: "4/0", diameter_mm: 10.160, area_mm2: 81.07 },
+        { swg: "3/0", diameter_mm: 9.449, area_mm2: 70.09 },
+        { swg: "2/0", diameter_mm: 8.839, area_mm2: 61.37 },
+        { swg: "1/0", diameter_mm: 8.230, area_mm2: 53.19 },
+        { swg: "1", diameter_mm: 7.620, area_mm2: 45.60 },
+        { swg: "2", diameter_mm: 7.010, area_mm2: 38.59 },
+        { swg: "3", diameter_mm: 6.401, area_mm2: 32.17 },
+        { swg: "4", diameter_mm: 5.893, area_mm2: 27.27 },
+        { swg: "5", diameter_mm: 5.385, area_mm2: 22.77 },
+        { swg: "6", diameter_mm: 4.877, area_mm2: 18.68 },
+        { swg: "7", diameter_mm: 4.470, area_mm2: 15.69 },
+        { swg: "8", diameter_mm: 4.064, area_mm2: 12.97 },
+        { swg: "9", diameter_mm: 3.658, area_mm2: 10.51 },
+        { swg: "10", diameter_mm: 3.251, area_mm2: 8.30 },
+        { swg: "12", diameter_mm: 2.642, area_mm2: 5.48 },
+        { swg: "14", diameter_mm: 2.032, area_mm2: 3.24 },
+        { swg: "16", diameter_mm: 1.626, area_mm2: 2.08 },
+        { swg: "18", diameter_mm: 1.219, area_mm2: 1.17 },
+        { swg: "20", diameter_mm: 0.914, area_mm2: 0.66 },
+        { swg: "25", diameter_mm: 0.518, area_mm2: 0.21 },
+        { swg: "30", diameter_mm: 0.315, area_mm2: 0.078 },
+        { swg: "36", diameter_mm: 0.193, area_mm2: 0.029 }
+    ];
+
+    const resultsDiv = document.getElementById('results');
+    const swgSelect = document.getElementById('swgSelect');
+
+    /**
+     * Initializes the dropdown menu with SWG options from the lookup table.
+     */
+    function populateDropdown() {
+        SWG_DATA_LOOKUP.forEach(item => {
+            const option = document.createElement('option');
+            // Use 'swg' property for both value and text
+            option.value = item.swg;
+            option.textContent = `SWG ${item.swg}`;
+            swgSelect.appendChild(option);
+        });
+    }
+
+    /**
+     * Resets the results area to an error state.
+     * @param {string} message - The error message to display.
+     */
+    function displayError(message) {
+        resultsDiv.classList.remove('bg-success', 'bg-primary');
+        resultsDiv.classList.add('error');
+        resultsDiv.innerHTML = `<p class="mb-1 fw-bold">Error!</p><p class="result-value">${message}</p>`;
+    }
+
+    /**
+     * Performs the SWG to mm / mm² conversion.
+     */
+    function convertSWG() {
+        const selectedSWG = document.getElementById('swgSelect').value;
+
+        // Validation
+        if (!selectedSWG) {
+            displayError("Please select an SWG size.");
+            return;
+        }
+
+        try {
+            // Find the corresponding data object
+            const foundGauge = SWG_DATA_LOOKUP.find(gauge => gauge.swg === selectedSWG);
+
+            if (foundGauge) {
+                const areaMM2 = foundGauge.area_mm2;
+                const diameterMM = foundGauge.diameter_mm;
+
+                // Display Results
+                resultsDiv.classList.remove('error');
+                resultsDiv.classList.add('bg-primary');
+
+                resultsDiv.innerHTML = `
+                    <p class="mb-0">Selected SWG: ${selectedSWG}</p>
+                    <div class="row">
+                        <div class="col-6 border-end border-light">
+                            <p class="result-value mb-1">${diameterMM.toFixed(3)}</p>
+                            <p class="unit-label mb-0">Diameter (mm)</p>
+                        </div>
+                        <div class="col-6">
+                            <p class="result-value mb-1">${areaMM2.toFixed(3)}</p>
+                            <p class="unit-label mb-0">Area ($\text{mm}^2$)</p>
+                        </div>
+                    </div>
+                `;
+
+            } else {
+                displayError("Gauge not found in lookup table.");
+            }
+
+        } catch (error) {
+            console.error(error);
+            displayError("An unexpected error occurred during conversion.");
+        }
+    }
+
+    // Initialize the dropdown when the page loads
+    window.onload = populateDropdown;
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

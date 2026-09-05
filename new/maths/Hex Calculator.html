@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hex Calculator</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #10b981; /* Tailwind emerald-500 */
+            --danger-color: #ef4444;  /* Tailwind red-500 */
+        }
+
+        body {
+            background-color: #ecfdf5; /* Tailwind emerald-50 */
+            font-family: 'Inter', sans-serif;
+            padding: 20px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-radius: 1.5rem;
+            border: none;
+            max-width: 600px;
+            width: 95%;
+        }
+
+        .btn-custom {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.2s;
+        }
+        .btn-custom:hover {
+            background-color: #059669; /* emerald-600 */
+            border-color: #059669;
+        }
+
+        /* Input and Selection Styling */
+        .input-group-text {
+            background-color: #d1fae5; /* emerald-100 */
+            border-color: #a7f3d0; /* emerald-200 */
+            color: #065f46;
+            font-weight: 600;
+        }
+        .form-control:focus {
+            border-color: #34d399; /* emerald-400 */
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.25);
+        }
+        
+        /* Operator Selector Styling */
+        .operator-select {
+            font-size: 1.25rem;
+            font-weight: 700;
+            line-height: 1;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            border-color: #a7f3d0;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: background-color 0.2s;
+        }
+        .operator-select:hover {
+            background-color: #f0fff4;
+        }
+        
+        /* Result Styling */
+        .result-container {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 1rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .result-box {
+            background-color: rgba(255, 255, 255, 0.15);
+            padding: 15px 20px;
+            border-radius: 0.75rem;
+            word-break: break-all;
+            margin-bottom: 15px;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .final-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        
+        .error-message {
+            color: var(--danger-color);
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card calculator-card p-4 md:p-6">
+                <h1 class="card-title text-center text-emerald-600 mb-4 fw-bold text-2xl md:text-3xl">Hex Calculator</h1>
+                <p class="text-center text-muted mb-4 text-sm">Perform arithmetic operations on hexadecimal (Base 16) numbers.</p>
+
+                <form id="hexForm" onsubmit="event.preventDefault(); calculateHex();">
+                    
+                    <h5 class="text-emerald-500 fw-bold mb-3">Operation Input</h5>
+                    
+                    <div class="row g-3 align-items-center mb-5">
+                        <!-- Hex A Input -->
+                        <div class="col-5">
+                            <input type="text" class="form-control p-3 text-center text-uppercase" id="inputHexA" value="FF" placeholder="Hex A (e.g., FF)" required oninput="calculateHex()">
+                            <p class="text-center text-muted mt-2 text-sm">Hex A</p>
+                        </div>
+                        
+                        <!-- Operator -->
+                        <div class="col-2 text-center">
+                            <select id="operator" class="form-select operator-select" onchange="calculateHex()">
+                                <option value="add">+</option>
+                                <option value="subtract">-</option>
+                                <option value="multiply">&times;</option>
+                                <option value="divide">÷</option>
+                            </select>
+                        </div>
+
+                        <!-- Hex B Input -->
+                        <div class="col-5">
+                            <input type="text" class="form-control p-3 text-center text-uppercase" id="inputHexB" value="1A" placeholder="Hex B (e.g., 1A)" required oninput="calculateHex()">
+                            <p class="text-center text-muted mt-2 text-sm">Hex B</p>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-custom w-full btn-lg rounded-xl text-white mt-2">Calculate</button>
+                </form>
+
+                <!-- Results Area -->
+                <div class="result-container" id="hexResultsContainer" style="display:none;">
+                    <p class="result-label mb-3 text-lg fw-bold">Result in Different Bases</p>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <div class="result-box">
+                                <p class="result-label">Hexadecimal (Base 16)</p>
+                                <p class="final-value" id="finalHexResult">0</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                            <div class="result-box">
+                                <p class="result-label">Decimal (Base 10)</p>
+                                <p class="final-value text-base" id="finalDecResult">0</p>
+                            </div>
+                        </div>
+                         <div class="col-12 col-md-6">
+                            <div class="result-box">
+                                <p class="result-label">Binary (Base 2)</p>
+                                <p class="final-value text-base" id="finalBinResult">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-center mt-3 text-sm text-gray-500" id="message">Enter two valid hexadecimal numbers and select an operation.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Result Elements ---
+    const finalHexResultElement = document.getElementById('finalHexResult');
+    const finalDecResultElement = document.getElementById('finalDecResult');
+    const finalBinResultElement = document.getElementById('finalBinResult');
+    const hexResultsContainer = document.getElementById('hexResultsContainer');
+
+    // --- Input Elements ---
+    const inputHexA = document.getElementById('inputHexA');
+    const inputHexB = document.getElementById('inputHexB');
+    const operatorSelect = document.getElementById('operator');
+    
+    // --- General Elements ---
+    const messageElement = document.getElementById('message');
+    
+    /**
+     * Helper function to display results in all three bases.
+     */
+    function displayResult(decResult) {
+        let hexResult = decResult.toString(16).toUpperCase();
+        
+        // Handle negative numbers for display (simple prefix)
+        if (decResult < 0) {
+            // Get the absolute value for conversion and re-add the negative sign
+            const absDec = Math.abs(decResult);
+            hexResult = '-' + absDec.toString(16).toUpperCase();
+            finalBinResultElement.textContent = 'Use two\'s complement for technical representation.';
+        } else {
+            // Pad binary result for better readability (groups of 4 bits)
+            const binResult = decResult.toString(2);
+            const padding = binResult.length % 4;
+            const paddedBin = padding === 0 ? binResult : '0'.repeat(4 - padding) + binResult;
+            finalBinResultElement.textContent = paddedBin.match(/.{1,4}/g).join(' ');
+        }
+
+        finalHexResultElement.textContent = hexResult;
+        finalDecResultElement.textContent = decResult.toLocaleString('en-US');
+
+        messageElement.textContent = 'Calculation successful.';
+        messageElement.classList.remove('error-message', 'text-red-500');
+        messageElement.classList.add('text-gray-500');
+        hexResultsContainer.style.display = 'block';
+    }
+
+    /**
+     * Displays an error message.
+     */
+    function displayError(msg) {
+        messageElement.textContent = msg;
+        messageElement.classList.add('error-message', 'text-red-500');
+        messageElement.classList.remove('text-gray-500');
+        hexResultsContainer.style.display = 'none';
+        finalHexResultElement.textContent = '0';
+        finalDecResultElement.textContent = '0';
+        finalBinResultElement.textContent = '0';
+    }
+    
+    /**
+     * Main function to perform hexadecimal arithmetic.
+     */
+    function calculateHex() {
+        try {
+            const hexA = inputHexA.value.trim();
+            const hexB = inputHexB.value.trim();
+            const operator = operatorSelect.value;
+            
+            // Regex to check for valid hex digits (0-9, A-F, case insensitive)
+            const hexRegex = /^[0-9A-Fa-f]+$/;
+
+            if (!hexA || !hexB) {
+                 displayError('Please enter both Hex A and Hex B values.');
+                 return;
+            }
+
+            if (!hexRegex.test(hexA) || !hexRegex.test(hexB)) {
+                displayError('Invalid input: Please use only valid hexadecimal digits (0-9, A-F).');
+                return;
+            }
+
+            // Convert hex strings to decimal integers
+            const decA = parseInt(hexA, 16);
+            const decB = parseInt(hexB, 16);
+            
+            let decResult;
+
+            switch (operator) {
+                case 'add':
+                    decResult = decA + decB;
+                    break;
+                case 'subtract':
+                    decResult = decA - decB;
+                    break;
+                case 'multiply':
+                    decResult = decA * decB;
+                    break;
+                case 'divide':
+                    if (decB === 0) {
+                        displayError('Cannot divide by zero.');
+                        return;
+                    }
+                    // Hex calculators typically use integer division
+                    decResult = Math.floor(decA / decB);
+                    break;
+            }
+
+            // Display the result derived from the decimal value
+            displayResult(decResult);
+
+        } catch (e) {
+            console.error(e);
+            displayError('An unexpected error occurred during the calculation.');
+        }
+    }
+
+    // --- Initialization and Event Listeners ---
+    window.onload = () => {
+        // Initial calculation on load (FF + 1A = 129 (Hex: 119))
+        calculateHex();
+    };
+
+</script>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>

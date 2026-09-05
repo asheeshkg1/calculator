@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumens to Candela Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary-color: #f59e0b; /* Tailwind amber-500 */
+            --secondary-color: #fef3c7; /* Tailwind amber-100 */
+            --text-color: #78350f; /* Tailwind amber-900 */
+        }
+
+        body {
+            background-color: #fffbeb; /* Light amber background */
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            border-radius: 1.5rem;
+            background-color: white;
+            max-width: 550px;
+            width: 95%;
+            border-top: 6px solid var(--primary-color);
+        }
+
+        .input-group label {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .input-field {
+            padding: 12px;
+            border-radius: 0.75rem;
+            border: 2px solid #fde68a; /* Amber-200 */
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+        .input-field:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+        }
+        
+        /* Result Display */
+        .result-container {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 1rem;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
+        }
+        
+        .final-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-top: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 5px 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            border-top: 1px dashed rgba(255, 255, 255, 0.4);
+        }
+        .summary-row span:last-child { font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<!-- RAPIDTABLES TOP BAR BACKLINK -->
+<div id="rt-top-bar" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; padding: 10px 20px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="../../index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px; transition: transform 0.2s;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+<!-- END RAPIDTABLES TOP BAR BACKLINK -->
+
+
+<div class="container mx-auto">
+    <div class="card calculator-card p-6 md:p-8">
+        <h1 class="card-title text-center text-amber-700 mb-6 fw-bold text-2xl md:text-3xl">Lumens ($\Phi$) to Candela ($I$) Calculator</h1>
+        
+        <p class="text-center text-gray-500 mb-8 text-sm">
+            Candela (intensity) is calculated by dividing total Lumens by the <span class="font-semibold">Solid Angle ($\Omega$)</span> of the beam.
+            $$I = \frac{\Phi}{\Omega}$$
+        </p>
+
+        <!-- Lumens Input -->
+        <div class="input-group mb-6">
+            <label for="lumensInput" class="block mb-2">Total Luminous Flux ($\Phi$) [lm]</label>
+            <input type="number" id="lumensInput" class="input-field w-full" placeholder="e.g., 800" value="800" step="any" oninput="calculateCandela()">
+        </div>
+
+        <!-- Beam Angle Input -->
+        <div class="input-group mb-6">
+            <label for="angleInput" class="block mb-2">Full Beam Angle ($\theta$) [degrees]</label>
+            <input type="number" id="angleInput" class="input-field w-full" placeholder="e.g., 38" value="38" step="any" oninput="calculateCandela()">
+            <p class="text-xs text-gray-500 mt-2 ml-2">Use $360^{\circ}$ for an omnidirectional light (like a bare bulb).</p>
+        </div>
+
+        <!-- Result Display -->
+        <div class="result-container">
+            <p class="text-xl font-light">Calculated Luminous Intensity ($I$)</p>
+            <p class="final-value" id="finalResult">0.00</p>
+            <p class="text-2xl font-semibold opacity-90">CANDELA</p>
+            
+            <hr class="border-white border-opacity-30 my-4">
+
+            <div class="summary-row">
+                <span>Calculated Solid Angle ($\Omega$)</span>
+                <span id="solidAngleValue">0.0000 sr</span>
+            </div>
+        </div>
+        
+        <p class="text-center mt-4 text-sm text-red-500 font-medium hidden" id="errorMessage"></p>
+    </div>
+</div>
+
+<script>
+    const lumensInput = document.getElementById('lumensInput');
+    const angleInput = document.getElementById('angleInput');
+    const finalResultElement = document.getElementById('finalResult');
+    const solidAngleValueElement = document.getElementById('solidAngleValue');
+    const errorMessageElement = document.getElementById('errorMessage');
+
+    const PI = Math.PI;
+
+    /**
+     * Helper function to show errors.
+     * @param {string} msg 
+     */
+    function displayError(msg) {
+        errorMessageElement.textContent = msg;
+        errorMessageElement.classList.remove('hidden');
+        finalResultElement.textContent = '---';
+        solidAngleValueElement.textContent = '--- sr';
+    }
+
+    /**
+     * Main function to perform Lumens to Candela conversion.
+     */
+    function calculateCandela() {
+        errorMessageElement.classList.add('hidden');
+
+        const Phi = parseFloat(lumensInput.value);
+        const theta_deg = parseFloat(angleInput.value);
+
+        // 1. Input Validation
+        if (isNaN(Phi) || isNaN(theta_deg)) {
+            displayError('Please enter valid numeric values for Lumens and Beam Angle.');
+            return;
+        }
+
+        if (Phi < 0) {
+            displayError('Lumens value cannot be negative.');
+            return;
+        }
+
+        if (theta_deg < 0 || theta_deg > 360) {
+            displayError('Beam Angle must be between $0^{\circ}$ and $360^{\circ}$.');
+            return;
+        }
+
+        // 2. Solid Angle Calculation (Omega)
+        // Convert half the angle to radians: alpha = (theta / 2) * (PI / 180)
+        const alpha_rad = (theta_deg / 2) * (PI / 180);
+
+        // Formula for solid angle of a cone: Omega = 2*pi * (1 - cos(alpha))
+        const Omega = 2 * PI * (1 - Math.cos(alpha_rad));
+
+        // 3. Candela Calculation (I)
+        let I;
+        
+        if (Omega === 0) {
+            // Edge case: 0 degree angle means zero solid angle. If Lumens > 0, Candela is theoretically infinite.
+            if (Phi > 0 && theta_deg === 0) {
+                 displayError('For a $0^{\circ}$ beam angle, Candela is infinite for any positive Lumen value (perfectly focused beam).');
+                 return;
+            } else {
+                 I = 0;
+            }
+        } else {
+            // I = Phi / Omega
+            I = Phi / Omega;
+        }
+
+
+        // 4. Display Results
+        solidAngleValueElement.textContent = `${Omega.toFixed(4)} sr`;
+        finalResultElement.textContent = I.toFixed(2);
+    }
+
+    // --- Initialization ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Run calculation on load with default data
+        calculateCandela();
+    });
+</script>
+
+<!-- RAPIDTABLES FOOTER BACKLINK -->
+<footer id="rt-footer-bar" style="text-align: center; padding: 24px 16px; font-size: 14px; color: #64748b; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border-top: 1px solid #e2e8f0; margin-top: 50px; background: #f8fafc;">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+<!-- END RAPIDTABLES FOOTER BACKLINK -->

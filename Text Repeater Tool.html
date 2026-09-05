@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Text Repeater Tool</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding: 2rem;
+    }
+    .copy-btn {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .copy-btn:hover {
+      background: linear-gradient(135deg, #66bb6a, #1b5e20);
+      transform: scale(1.05);
+    }
+    textarea {
+      resize: vertical;
+    }
+  </style>
+
+<!-- RAPIDTABLES LAYOUT FIX STYLES -->
+<style id="rt-layout-fix">
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    background-color: inherit;
+  }
+  #rt-top-bar {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #f8fafc;
+    padding: 10px 20px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    flex-wrap: wrap;
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  #rt-main-content-wrapper {
+    flex: 1 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 40px 15px 30px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  #rt-footer-bar {
+    flex-shrink: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 14px;
+    color: #64748b;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+</style>
+<!-- END RAPIDTABLES LAYOUT FIX STYLES -->
+
+</head>
+<body>
+
+<div id="rt-top-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="index.html" id="rt-back-link" style="color: #38bdf8; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <span>← All Calculators Suite</span>
+        </a>
+    </div>
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span style="color: #94a3b8; font-size: 13px;">Looking for comprehensive conversion tables?</span>
+        <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #ffffff; background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-decoration: none; font-weight: 700; padding: 5px 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(16,185,129,0.3); font-size: 13px;">
+            Visit RapidTables.me ↗
+        </a>
+    </div>
+</div>
+
+<div id="rt-main-content-wrapper">
+<div class="container">
+  <h2 class="mb-4 text-center">🔁 Text Repeater Tool</h2>
+  <div class="row g-4">
+    <!-- Input Column -->
+    <div class="col-md-6">
+      <label for="inputText" class="form-label fw-bold">Input</label>
+      <textarea id="inputText" class="form-control" rows="5" placeholder="Enter your text..."></textarea>
+
+      <div class="mt-3">
+        <label class="form-label fw-bold">Repetitions</label>
+        <input type="number" id="repeatCount" class="form-control" value="10" min="1">
+      </div>
+
+      <div class="form-check mt-3">
+        <input class="form-check-input" type="checkbox" id="addPeriod" checked>
+        <label class="form-check-label" for="addPeriod">Add period (.)</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="addSpace" checked>
+        <label class="form-check-label" for="addSpace">Add space</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="addNewline" checked>
+        <label class="form-check-label" for="addNewline">Add new line</label>
+      </div>
+
+      <div class="mt-3">
+        <label for="textStyle" class="form-label fw-bold">Text Style</label>
+        <select class="form-select" id="textStyle">
+          <option value="regular" selected>Regular</option>
+          <option value="bold">Bold</option>
+          <option value="italic">Italic</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary mt-4 w-100" onclick="repeatText()">🔁 Repeat Text</button>
+    </div>
+
+    <!-- Output Column -->
+    <div class="col-md-6">
+      <label for="outputText" class="form-label fw-bold">Output</label>
+      <textarea id="outputText" class="form-control" rows="10" readonly></textarea>
+      <button class="copy-btn mt-3 w-100" onclick="copyOutput()">📋 Copy Text</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function repeatText() {
+    const text = document.getElementById("inputText").value;
+    const repeatCount = parseInt(document.getElementById("repeatCount").value);
+    const addPeriod = document.getElementById("addPeriod").checked;
+    const addSpace = document.getElementById("addSpace").checked;
+    const addNewline = document.getElementById("addNewline").checked;
+    const textStyle = document.getElementById("textStyle").value;
+
+    let repeated = "";
+
+    for (let i = 0; i < repeatCount; i++) {
+      let part = text;
+
+      // Apply styles
+      if (textStyle === "bold") {
+        part = `**${part}**`;
+      } else if (textStyle === "italic") {
+        part = `*${part}*`;
+      }
+
+      if (addPeriod) part += ".";
+      if (addSpace) part += " ";
+      if (addNewline) part += "\n";
+
+      repeated += part;
+    }
+
+    document.getElementById("outputText").value = repeated;
+  }
+
+  function copyOutput() {
+    const output = document.getElementById("outputText");
+    output.select();
+    output.setSelectionRange(0, 99999); // For mobile
+    document.execCommand("copy");
+
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = "✅ Copied!";
+    setTimeout(() => { btn.innerHTML = originalText; }, 1500);
+  }
+</script>
+</div>
+
+<footer id="rt-footer-bar">
+    <p style="margin: 0 0 8px 0;">© 2026 Free Online Calculators & Converters Suite. All rights reserved.</p>
+    <p style="margin: 0;">For comprehensive reference tables, formulas, and math & electrical converters, visit <a href="https://www.rapidtables.me/" target="_blank" rel="noopener dofollow" style="color: #2563eb; font-weight: 700; text-decoration: underline;">RapidTables.me</a>.</p>
+</footer>
+
+</body>
+</html>
+
+<--
+
+Title: Text Repeater Tool – Repeat Any Text Multiple Times with One Click
+
+Meta Description:
+Use the free Text Repeater Tool to repeat words or sentences multiple times. Add line breaks, periods, spaces, and share via WhatsApp, Telegram, SMS & more.
+
+🔁 Text Repeater Tool – Repeat Any Text Instantly
+Need to repeat a word, phrase, or sentence multiple times without typing it over and over? The Text Repeater Tool is the perfect solution for you!
+
+With this powerful online tool, you can quickly generate repeated text with customizable formatting options. Whether you want to prank friends, create pattern texts, or spam a message creatively — it’s all possible in seconds.
+
+🔧 Features of the Text Repeater Tool
+✅ Enter Any Text – Type a word, phrase, or sentence.
+
+🔁 Set Number of Repetitions – Repeat text as many times as you want.
+
+✍️ Formatting Options:
+
+Add Period (.)
+
+Add Space
+
+Add New Line
+
+🎨 Choose Text Style – Regular, bold, italic, and more (if available).
+
+📤 Output Ready for Copy – Copy with a single click.
+
+📲 Instant Share Options – Send to Telegram, WhatsApp, SMS, or Messenger.
+
+💡 How to Use the Text Repeater Tool
+Type your text in the Input box (e.g., asheesh).
+
+Set the number of repetitions (e.g., 10).
+
+Choose optional settings: Add Period, Add Space, or Add Newline.
+
+Click Repeat Text.
+
+Get your repeated output and share or copy it instantly.
+
+🔒 100% Safe & Browser-Based
+Your data is never uploaded. Everything runs inside your browser — fast, private, and secure.
+
+📲 Why Use a Text Repeater?
+Save time from manual typing
+
+Fun for social media challenges
+
+Create stylized bio text or status
+
+Send repeated messages on messaging apps
+
+Useful for meme pages, content creators, and techies
+
+-->
